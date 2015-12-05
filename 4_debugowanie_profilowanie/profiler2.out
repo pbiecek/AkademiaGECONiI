@@ -1,0 +1,5 @@
+sample.interval=10000
+"model.response" "lm" 
+"lm.fit" "lm" 
+"lm.fit" "lm" 
+"lm.fit" "lm" 

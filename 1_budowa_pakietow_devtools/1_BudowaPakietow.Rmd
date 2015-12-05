@@ -1,0 +1,414 @@
+---
+title: "Budowa pakietów z użyciem pakietu devtools"
+author: "Przemysław Biecek"
+date: "5 XII 2015"
+output: 
+  rmarkdown::tufte_handout:
+  toc: true
+---
+
+
+\begin{marginfigure}
+\includegraphics{../geconii.png}
+\end{marginfigure}
+
+# Dane do pracy
+
+W poniższych przykładach będziemy wykorzystywać zbiór danych `auta2012` z pakietu `PogromcyDanych`.
+
+```{r, message=FALSE, warning=FALSE}
+library(PogromcyDanych)
+auta2012[1:3,1:5]
+```
+
+# Zróbmy sobie pakiet! 
+
+W programie R zbiory danych i funkcje są grupowane w pakietach. Ułatwia to  dystrybucję i zarządzanie powiązanymi ze sobą funkcjonalnościami. 
+
+Pakiet buduje się często po to by:
+
+- udostępnić opracowane rozwiązanie, algorytm, funkcjonalność współpracownikom lub reszcie świata,
+- ułatwić dostęp do kilku zbiorów danych studentom, współpracownikom, reszcie świata.
+
+\marginnote{Cytując Hilary Parker: 
+\textit{Seriously, it doesn’t have to be about sharing your code (although that is an added benefit!). It is about saving yourself time.}}
+
+Ale warto tworzyć pakiety wokół realizowanych projektów, nawet jeżeli nie mamy w planach nigdy z nikim się tym pakietem podzielić.
+
+Dlaczego? Podstawową funkcją pakietów jest bowiem porządkowanie kodu, danych, dokumentacji i testów. *Korzystanie z pakietów wymusza strukturę* i dlatego warto każdy projekt realizować jako pakiet. Dobrym pomysłem jest też umieszczanie większych pakietów na GitHubie. 
+
+# Struktura
+
+Pakiety mają wspólną strukturę katalogów. Pakiet to katalog, wewnątrz którego znajdują się:
+
+\begin{marginfigure}
+\includegraphics{struktura.png}
+\caption{Przykładowa struktura pakietu proton.}
+\end{marginfigure}
+
+- plik `DESCRIPTION`, z opisem podstawowych informacji o pakiecie (nazwa, opis, autor, zależności),
+- plik `NAMESPACE`, z opisem funkcji udostępnionych przez pakiet,
+- katalog `R`, z listą funkcji w programie R,
+- katalog `data`, z listą zbiorów danych udostępnionych przez pakiet,
+- katalog `man`, z plikami dokumentacji Rd dla udostępnionych funkcji i zbiorów danych,
+- katalog `vignettes`, z listą przewodników opisujących funkcjonalności pakietu,
+- katalog `tests`, z listą testów weryfikujących poprawność funkcji.
+
+# Tworzenie nowego pakietu
+
+Pakiet to katalog mający określoną strukturę. Można go więc zbudować tworząc w dowolnny sposób potrzebne podkatalogi i pliki.
+
+Znacznie wygodniej jest jednak do tego celu wykorzystać pakiet `devtools` i udostępnioną przez niego funkcję `create`.
+
+Stwórzmy w roboczym katalogu nowy pakiet o nazwie `kupPanAuto`.
+
+\marginnote{Przedstawimy budowę pakietów na podstawie zbioru danych auta2012 z pakietu PogromcyDanych}
+
+```{r, echo=FALSE}
+unlink("kupPanAuto", recursive = TRUE)
+```
+\marginnote{Aby zainstalować pakiet devtools, powinniśmy wcześniej zainstalować go instrukcją install.packages(devtools)}
+```{r}
+library(devtools)
+create("kupPanAuto")
+```
+
+Stworzenie pakietu funkcją `create` powoduje utworzenie pliku z projektem `.Rproj` dla RStudio. Otwórzmy ten projekt, dzięki czemu katalog z pakietem stanie się katalogiem roboczym.
+
+\begin{marginfigure}
+\includegraphics{pakiet1.png}
+\caption{Struktura nowo utworzonego pakietu.}
+\end{marginfigure}
+
+# Plik DESCRIPTION
+
+Nowo stworzony pakiet ma generyczny plik DESCRIPTION. 
+Pierwszą rzeczą, którą należy zrobić po zbudowaniu pakietu to uzupełnienie informacji w tym pliku. Większość punktów ma nazwy jednoznacznie określające co powinno być w nie wpisane.
+
+Szczególnie istotne są sekcje `Imports` i `Suggests`. 
+
+* Sekcja `Imports` wskazuje pakiety niezbędne do działania Twojego pakietu. R będzie je instalował przy instalacji Twojego pakietu.
+* Sekcja `Suggests` wskazuje pakiety dodatkowe, które mogą rozszerzać możliwości Twojego pakietu, ale nie są niezbędne do działania kluczowych funkcjonalności.
+
+\begin{figure*}
+\includegraphics{pakiet2.png}
+\caption{Przykładowa treść pliku DESCRIPTION dla pakietu proton}
+\end{figure*}
+
+## Zadanie 1
+
+Stwórz na swoim komputerze pakiet o nazwie `kupPanAuto`. 
+Zrobimy ten pakiet po to by ułatwić sobie odpowiedź na pytanie ile kosztują używane auta.
+
+Uzupełnij plik DESCRIPTION w tym pakiecie, dodaj swoje dane, opis pakietu oraz informację o licencji.
+
+# Cykl życia pakietu
+
+Cykl życia pakietu składa się z kilku kroków:
+
+* Pakiet dostępny jako katalog na dysku
+* Pakiet w postaci źródłowej `tar.gz` lub binarnej `zip/tgz`
+* Pakiet zainstalowany (pakiet binarny rozpakowany w katalogu z bibliotekami R)
+* Pakiet włączony w aktualnej sesji R.
+
+## Budowanie pakietu
+
+Aby przejść do postaci źródłowej można wykorzystać polecenie `build`.
+
+\marginnote{Parametrem funkcji build() jest katalog w którym znajduje się pakiet do zbudowania. Domyślnie jest to katalog roboczy.}
+
+```{r, warning=FALSE, message=FALSE}
+build("kupPanAuto")
+```
+
+## Instalacja pakietu
+
+Pakiety instalowane są w katalogu z bibliotekami R. Ścieżkę do tych katalogów można odczytać używając funkcji `.libPaths()`.
+
+```{r}
+.libPaths() 
+```
+
+Aby zainstalować pakiet z pliku źródłowego lub z katalogu, można wykorzystać polecenie `install`.
+
+\marginnote{Parametrem funkcji install() jest katalog w którym znajduje się pakiet do zbudowania. Domyślnie jest to katalog roboczy.}
+
+```{r, warning=FALSE, message=FALSE}
+install("kupPanAuto")
+```
+
+Pakiety można instalować z repozytorium CRAN poleceniem `install.packages()` a z repozytoriów GitHub poleceniem `install_github()`.
+
+Poniższa instrukcja zainstaluje pakiet `proton` ze strony https://github.com/BetaAndBit/PieczaraPietraszki
+
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
+install_github("BetaAndBit/PieczaraPietraszki/protonENG")
+```
+
+## Włączanie pakietu
+
+Aby skorzystać z danych lub funkcji pakietu należy pakiet włączyć poleceniem `require()` lub `library()`. Ewentualnie można wykorzystywać operator dostępu `::`.\marginnote{Lub ::: dla funkcji, które nie są publiczne}
+
+```{r}
+library(kupPanAuto)
+```
+
+# Uzupełniamy pakiet
+
+Udało nam się zainstalować pusty pakiet. Uzupełnijmy go teraz interesującą treścią.
+
+## Dodajemy zależne pakiety 
+
+Jeżeli w naszym pakiecie, chcemy korzystać z funkcji lub danych z innych pakietów, powinniśmy dodać odpowiednią zależność do pliku `DESCRIPTION`.
+
+Możemy w tym celu wykorzystać funkcję `use_package()`, która dodaje informacje o zależnościach od wskazanych pakietach.
+
+```{r}
+use_package(package = "PogromcyDanych", pkg = "kupPanAuto")
+use_package(package = "dplyr", pkg = "kupPanAuto")
+```
+
+## Dodajemy funkcję
+
+Aby dodać funkcję do pakietu, wystarczy jej definicję dodać w pliku o rozszerzeniu R do katalogu o nazwie `R`. Podczas ładowania pakietu do przestrzeni nazw pakietu wczytywane są wszystkie instrukcje z plików `*.R` umieszczonych w katalogu `R`.
+
+Nazwa pliku `*.R` nie musi być związana z zawartością, ale zwyczajowo nazwy plików odpowiadają nazwom funkcji, które w danym pliku są zaimplementowane.
+
+Przykładowo, poniżej przedstawiamy definicję funkcji `jakiPrzebieg`, liczącą średni przebieg aut z danego rocznika. Definicję tej funkcji należy wkleić do dowolnego pliku z rozszerzeniem `R` w katalogu o nazwie `R`.
+
+```{r}
+jakiPrzebieg <- function(rok ='') {
+   selected <- auta2012 %>%
+    filter(Rok.produkcji == rok)
+  mean(selected$Przebieg.w.km, na.rm=TRUE)
+}
+```
+
+Również zwyczajowo w pliku `zzz.R` umieszcza się instrukcje, które mają być wczytane jako ostatnie.
+
+## Zadanie 2
+
+Dodaj do pakietu `kupPanAuto` funkcję `jakaCena(marka =, rok =)`, która przyjmie dwa argumenty `marka` i `rok` a następnie jako wynik zwróci średnią cenę aut o marce `marka` wyprodukowanych w roku `rok`.
+
+Zbuduj i zainstaluj pakiet `kupPanAuto`. Wywołaj funkcję `jakaCena()` aby sprawdzić, czy poprawnie działa.
+
+## Dodajemy dokumentacje dla funkcji
+
+W programie R dokumentacja dla funkcji i danych przechowywana jest w plikach `Rd` w katalogu `man`.
+
+Wygodniej jednak pracować z dokumentacją, gdy jest ona w tym samym pliku co kod R. Z tego powodu sugerowanym rozwiązaniem do tworzenia dokumentacji jest stosowanie coraz bardziej popularnego pakietu `roxygen2`. 
+
+Dokumentacja umieszczona jest w wierszach rozpoczynających się od znaków `#' `. 
+Pierwsza linia dokumentacji określa tytuł, kolejny akapit to krótki opis. Następne akapity to rozszerzony opis.
+
+W dokumentacji wykorzystywane są tagi `roxygen2`, rozpoczynające się od znaku `@`.
+
+Najczęściej stosowane tagi to
+
+* `@param` - opis dla określonego parametru opisywanej funkcji
+* `@return` - opis dla wyniku funkcji
+* `@export` - tag określający, że dana funkcja ma być udostępniona przez pakiet
+* `@examples` - blok z przykładami
+* `@rdname` - określa nazwę pliku Rd
+
+\begin{figure*}
+\includegraphics{pakiet3.png}
+\caption{Przykładowa dokumentacja dla funkcji proton()}
+\end{figure*}
+
+## Dodajemy dane
+
+W pakietach możemy również przechowywać dane. 
+
+Aby dodać zbiór danych do pakietu, wystarczy zapisać go z użyciem funkcji `save()` z rozszerzeniem `rda` lub `RData` w katalogu `data`.
+
+Inna możliwość to użycie funkcji `use_data`.
+
+```{r, warning=FALSE, message=FALSE}
+library(PogromcyDanych)
+use_data(auta2012, pkg = "kupPanAuto")
+```
+
+Dla danych, również możemy dodać dokumentację w formacie `roxygen2`. Poniższa ilustracja przedstawia przykładową dokumentację.
+
+\begin{figure*}
+\includegraphics{pakiet4.png}
+\caption{Dokumentacja zbioru z danymi}
+\end{figure*}
+
+## Budowanie dokumentacji
+
+Dodanie opisów dla zbiorów danych czy funkcji w pikach R to jeszcze nie koniec tworzenia dokumentacji.
+Należy ją teraz przeformatować z postaci Roxygen do plików `Rd` zrozumiałych przez program R.
+
+W tym celu można wykorzystać funkcję `document()`, która generuje pliki `Rd` na podstawie dokumentacji z plików `R`. 
+
+```{r}
+document("kupPanAuto")
+```
+
+Po wykonaniu tej instrukcji odpowiednie pliki `Rd` są dodawane do katalogu `man`.
+
+## Ilustracje
+
+Dokumentacja w formacie `Rd` dotyczy pojedynczych funkcji lub zbiorów danych.
+
+Aby do pakietu dodać szerszy opis, przykłady użycia, ilustracje działania pakietu, w tym celu można wykorzystać winietki / ilustracje.
+
+Dodać ilustrację do pakietu można poleceniem `use_vignette`.
+
+```{r, message=FALSE, warning=FALSE}
+use_vignette("Jak kupić auto", pkg = "kupPanAuto")
+```
+
+# Testy
+
+\marginnote{\textit{Prawdziwym błędem jest błąd popełnić i nie naprawić go.}, Konfucjusz}
+
+Bardzo ważnym i bardzo zaniedbywaną częścią tworzenia pakietów jest przygotowywanie testów weryfikujących czy funkcjonalności wciąż działają.
+
+Dla programu R przygotowano kilka różnych rozwiązań pozwalających na integracje testów dla kodu. 
+
+W przypadku budowania pakietów, lekkim i wygodnym rozwiązaniem jest korzystanie z testów z pomocą pakietu `testthat`.
+
+## Dodajemy testy
+
+Testy dodajemy w plikach `R` do katalogu `tests/testthat`. 
+
+Aby dodać ten katalog do naszego pakietu, wraz z potrzebnymi zależnościami, wystarczy wykorzystać instrukcję `use_testthat()`. Przygotuje ona całą niezbędną infrastrukturę.
+
+```{r}
+use_testthat("kupPanAuto")
+```
+
+Testy to wywołania funkcji `test_that()`, która przyjmuje dwa argumenty. 
+
+- Pierwszym jest nazwa testu, gdyby test wykrył błąd, ta nazwa ułatwi określenie co nie działa. 
+- Drugi parametr to lista oczekiwań, czyli funkcji rozpoczynających się od `expect_...`. Funkcje te sprawdzają, czy wywołanie funkcji kończy się oczekiwanym rezultatem, wartością, błędem, ostrzeżeniem, napisem itp.
+
+```{r, eval=FALSE}
+test_that("Result is a number",{
+  expect_true(is.numeric(jakaCena("Kia", 2010)))
+})
+test_that("An invalid number of parameters",{
+  expect_error(jakaCena())
+  expect_error(jakaCena("Kia"))
+})
+test_that("Results are correct",{
+  expect_equal(round(jakaCena("Kia", 2010)),
+               44544)
+  expect_equal(round(jakaCena("Kia", 2011)),
+               65989)
+})
+
+```
+
+```{r, echo=FALSE}
+cat(file="kupPanAuto/tests/testthat/test1.R", '
+test_that("Result is a number",{
+  expect_true(is.numeric(jakaCena("Kia", 2010)))
+})
+
+test_that("An invalid number of parameters",{
+  expect_error(jakaCena())
+  expect_error(jakaCena("Kia"))
+})
+
+test_that("Results are correct",{
+  expect_equal(round(jakaCena("Kia", 2010)),
+               44544)
+  expect_equal(round(jakaCena("Kia", 2011)),
+               65989)
+})
+')
+```
+
+## Uruchamiamy testy
+
+Aby wywołać wszystkie testy wystarczy wywołać funkcję `test()`.
+
+```{r, eval=FALSE}
+library(testthat)
+test("kupPanAuto")
+```
+
+## Zadanie 3
+
+Przygotuj trzy testy dla przygotowanej funkcji. Niech sprawdzają, czy funkcja w poprawny sposób wyznacza wartość dla określonych parametrów, czy poprawnie reaguje na blędy i czy zgadza się klasa wyniku funkcji.
+
+## Testujemy pakiet
+
+Aby pakiet został przyjęty na CRAN nie wystarczy, że funkcje działają poprawnie.
+
+Pakiet musi spełniać listę określonych warunków dotyczącej formatowania (Camel Case dla tytułów, niezbyt długie linie, poprawna dokumentacja, wykonywalne przykłady), czy spójności opisu.
+
+Do weryfikacji, czy pakiet jest zgodny z wszystkimi wyznacznikami można wykorzystać funkcję `check()`.
+
+```{r, eval=FALSE}
+check("kupPanAuto")
+```
+
+# Automatyczne formatowanie kodu
+
+Dla czytelności kodu bardzo ważne jest formatowanie kodu.
+
+Jeżeli nie mamy silnie rozwiniętych nawyków dotyczących formatowania kodu, warto skorzystać z automatycznego formatowania dla przygotowanych funkcji.
+
+Funkcja `tidy_dir()` z pakietu `formatR` formatuje wszystkie pliki R ze wskazanego katalogu.
+
+```{r, eval=FALSE}
+library("formatR")
+tidy_dir("kupPanAuto/R")
+```
+
+# Inne materiały
+
+Streszczeniem materiału o pakietach jest ściągawka pakietu devtools opracowana przez RStudio dostępna na stronie cheatsheet. ^[https://www.rstudio.com/wp-content/uploads/2015/03/devtools-cheatsheet.pdf]
+
+\begin{figure*}
+\includegraphics[page=1]{devtoolscheatsheet.pdf}
+\includegraphics[page=2]{devtoolscheatsheet.pdf}
+\end{figure*}
+
+Pozycją obowiązkową jest nowa książka Hadleya o tym jak pisać pakiety. Lektura na 3-4 godziny dostępna na stronie http://r-pkgs.had.co.nz/intro.html
+
+Bardzo rozbudowana, niespecjalnie czytelna ale wyczerpująca (z różnymi znaczeniami tego słowa) dokumentacja dotycząca pakietów dostępna jest na stronie ,,R extensions''.
+^[http://cran.r-project.org/doc/manuals/R-exts.html#Creating-R-packages]
+
+Uzupełnieniem dla obu powyższych jest dokumentacja pakietu `roxygen2` dostępna na stronie projektu. ^[https://github.com/klutometis/roxygen#roxygen2]
+
+Więcej o testach i pakiecie testthat przeczytać można w artykule *testthat: Get Started with Testing* Hadley Wickham. ^[https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf]
+
+# Rozwiązania
+
+```
+# Zadanie 2
+cat(file="kupPanAuto/R/jakaCena.R", "
+jakaCena <- function(marka ='', rok ='') {
+   selected <- auta2012 %>%
+    filter(Marka == marka, Rok.produkcji == rok)
+    mean(selected$Cena.w.PLN, na.rm=TRUE)
+}
+")
+install("kupPanAuto")
+library(kupPanAuto)
+jakaCena(marka="Kia", rok=2010)
+
+# Zadanie 3
+cat(file="kupPanAuto/tests/testthat/test1.R", '
+test_that("Result is a number",{
+  expect_true(is.numeric(jakaCena("Kia", 2010)))
+})
+test_that("An invalid number of parameters",{
+  expect_error(jakaCena())
+  expect_error(jakaCena("Kia"))
+})
+test_that("Results are correct",{
+  expect_equal(round(jakaCena("Kia", 2010)),
+               44544)
+  expect_equal(round(jakaCena("Kia", 2011)),
+               65989)
+})
+')
+test("kupPanAuto")
+```

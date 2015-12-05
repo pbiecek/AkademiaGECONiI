@@ -1,0 +1,78 @@
+---
+title: "Aplikacje webowe - shiny"
+author: "Przemysław Biecek"
+date: "5 XII 2015"
+output: 
+  rmarkdown::tufte_handout:
+  toc: true
+---
+
+\begin{marginfigure}
+\includegraphics{../geconii.png}
+\end{marginfigure}
+
+# Zróbmy sobie interaktywną aplikację webową! 
+
+Dzielenie się wynikami z analiz w R z innymi osobami odbwały się kiedyś na dwa sposoby:
+
+* Można było podzielić się skryptem w R i odbiorca zaawansowany technicznie miał możliwość modyfikacji ścieżki analiz, mógł modyfikowac skrypt i sprawdzać wyniki dla różnych parametrów.
+* Można było podzielić się raportem, który ukrywa techniczne detale ale nie pozostawia możliwości dynamicznej zmiany.
+
+Shiny łączy najlepsze cechy obu podejść. Pozwala na interaktywną eksplorację danych przy ukryciu szczegółów technicznych.
+
+# Przykłady
+
+* shiny1 - prosta aplikacja,
+
+\begin{figure}
+\includegraphics{shiny1.png}
+\caption{Aplikacja z jedną interaktywną kontrolką}
+\end{figure}
+
+* shiny2 - panel z różnymi wyjściami,
+
+\begin{figure}
+\includegraphics{shiny2.png}
+\caption{Aplikacja z kilkoma kontrolkami i kilkoma panelami}
+\end{figure}
+
+* shiny3 - wyrażenia reaktywne.
+
+\begin{figure}
+\includegraphics{shiny3.png}
+\caption{Aplikacja z użyciem wyrażeń reaktywnych}
+\end{figure}
+
+# Uruchamianie
+
+,,Ręczne'' uruchmianie aplikacji
+
+```{r, eval=FALSE}
+runApp('katalog',  display.mode = "showcase")
+```
+
+Aplikacje możemy umieścić na serwerze (uruchamianie zdalne) lub na gist (będzie pobrana i uruchomiona lokalnie)
+
+Przykład dla https://gist.github.com/pbiecek/0617b36500f95daa3a00
+
+```{r, eval=FALSE}
+runGist("0617b36500f95daa3a00")
+```
+
+# Materiały
+
+Samouczek ze strony RStudio z materiałami do nauki shiny krok po kroku ^[http://shiny.rstudio.com/tutorial/].
+
+Serwis RStudio do hostowania aplikacji ^[http://shiny.rstudio.com/deploy/]. 
+
+Galeria rozwiązań udostępniona przez RStudio ^[http://shiny.rstudio.com/gallery/].
+
+Dokuemntacja techniczna ze strony RStudio ^[http://shiny.rstudio.com/reference/shiny/latest/].
+
+
+# Zadanie
+
+Zbuduj aplikacje, pozwalającą na wybór marki samochodu oraz przedziału lat dla roku produkcji.
+
+* Na kilku panelach przedstaw rozkład ceny samochodu w zależności od roku produkcji.
+* Przedstaw średnie ceny dla poszczególnych modeli danej marki.
