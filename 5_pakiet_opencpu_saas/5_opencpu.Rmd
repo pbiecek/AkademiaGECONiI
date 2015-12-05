@@ -21,7 +21,7 @@ Dzisiaj będziemy pracowac z lokalną instalacją serwera `opencpu`. Do poważni
 
 # Ale o co chodzi?
 
-Zacznijmy od przykładu. Uruchomimy lokalnie serwer na porcie `4848`.
+Zacznijmy od przykładu. Uruchomimy lokalnie serwer na porcie `4348`.
 
 ```{r, eval=FALSE}
 library(opencpu)
@@ -216,7 +216,7 @@ httr::POST("https://public.opencpu.org/ocpu/library/base/R/identity",
 
 # Linki 
 
-Instrukcja jak zainstalować pakiet opencpu na serwerze ^[https://www.opencpu.org/download.html] oraz sSzersza dokumentacja pakietu dostępna jest na stronie projektu opencpu ^[https://www.opencpu.org/api.html#api-root].
+Instrukcja jak zainstalować pakiet opencpu na serwerze ^[https://www.opencpu.org/download.html] oraz szersza dokumentacja pakietu dostępna jest na stronie projektu opencpu ^[https://www.opencpu.org/api.html#api-root].
 
 
 # Zadanie
