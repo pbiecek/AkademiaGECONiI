@@ -210,10 +210,42 @@ system.time(tabulate(outer(1:N, 1:N, "*") %% 10))
 ```
 
 
-
 # Materiały
 
 Kilka bardzo ciekawych zadań do rozwiązania można znaleźć na stronach www.nimbios.org ^[http://www.nimbios.org/ifiles/hpc/1_basics.pdf], ^[http://www.nimbios.org/ifiles/hpc/2_performance.pdf].
+
+# Wielowątkowość
+
+Z użyciem pakietu `multicore`.
+
+```{r, eval=FALSE}
+library(parallel)
+library(PogromcyDanych)
+
+out <- split(auta2012 , f = auta2012$Marka)
+out[["Yugo"]]
+
+models <- mclapply(out, function(x) {
+  lm(Cena.w.PLN~Rok.produkcji, data=x)
+}, mc.cores = 8)
+
+models[["Yugo"]]
+```
+
+Z pakietem `multidplyr`
+
+```{r, eval=FALSE}
+library(multidplyr)
+cluster <- create_cluster(15)
+set_default_cluster(cluster)
+auta2012 %>% 
+  group_by(Marka) %>%
+  partition() %>% 
+  do(timepoints =  lm(Cena.w.PLN~Rok.produkcji, data=.)) %>%
+  collect() -> res
+# z każdego klastra jedna lista
+res[[2]][[1]]
+```
 
 # Pakiet dplyr
 
